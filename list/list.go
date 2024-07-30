@@ -1,6 +1,9 @@
 package list
 
-import "github.com/xuyang-lee/ezSet/set"
+import (
+	"github.com/xuyang-lee/ezSet/orderSet"
+	"github.com/xuyang-lee/ezSet/set"
+)
 
 // Reverse slice s
 func Reverse[T any](s []T) {
@@ -58,6 +61,11 @@ func Distinct[T comparable](s []T) []T {
 	return set.NewSetWithSlice(s).List()
 }
 
+// OrderDistinct returns a new slice with duplicates removed, The result keeps the order of the first appearance of the elements
+func OrderDistinct[T comparable](s []T) []T {
+	return orderSet.NewOrderSetWithSlice(s).List()
+}
+
 // Filter returns a new slice with elements that satisfy the predicate f
 func Filter[T any](s []T, f func(T) bool) []T {
 	var newList []T
@@ -67,6 +75,13 @@ func Filter[T any](s []T, f func(T) bool) []T {
 		}
 	}
 	return newList
+}
+
+// ProcessEach applies the function f to each element in the slice s
+func ProcessEach[T any](s []T, f func(T) T) {
+	for i, v := range s {
+		s[i] = f(v)
+	}
 }
 
 // Any checks if there is any element in the slice `s` that is not equal to the zero value of the type `T`
@@ -97,4 +112,14 @@ func Overlap[T comparable](a, b []T) ([]T, bool) {
 
 	s := set.NewSetWithSlice(a).Union(set.NewSetWithSlice(b))
 	return s.List(), s.Len() > 0
+}
+
+// IndexOf returns the index of the first occurrence of t in s, or -1 if t is not present in s
+func IndexOf[T comparable](s []T, t T) int {
+	for i, v := range s {
+		if v == t {
+			return i
+		}
+	}
+	return -1
 }
