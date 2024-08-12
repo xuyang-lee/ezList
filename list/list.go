@@ -3,6 +3,8 @@ package list
 import (
 	"github.com/xuyang-lee/ezSet/orderSet"
 	"github.com/xuyang-lee/ezSet/set"
+	"math/rand"
+	"time"
 )
 
 // Reverse slice s
@@ -122,4 +124,14 @@ func IndexOf[T comparable](s []T, t T) int {
 		}
 	}
 	return -1
+}
+
+// Shuffle the slice a
+func Shuffle[T any](a []T) {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+	for i := len(a) - 1; i > 0; i-- {
+		j := r.Intn(i + 1)      // 生成一个0到i的随机索引
+		a[i], a[j] = a[j], a[i] // 交换两个索引处的元素
+	}
 }
