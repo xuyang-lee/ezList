@@ -45,6 +45,13 @@ type MonotoneStack[T any] struct {
 	compare compareFunc[T]
 }
 
+// NewMonotoneStack returns a new MonotoneStack.
+//
+// t is the type of monotone stack: increase or decrease
+//
+// isStrict controls whether the stack is strictly monotonic;
+// if isStrict is false, the elem can be pushed onto the stack when top == elem;
+// if isStrict is true, the elem can not be pushed onto the stack when top == elem.
 func NewMonotoneStack[T constraints.Ordered](t MonotoneType, isStrict bool) *MonotoneStack[T] {
 	if t != MonotoneTypeIncrease && t != MonotoneTypeDecrease {
 		t = MonotoneTypeIncrease
@@ -57,7 +64,14 @@ func NewMonotoneStack[T constraints.Ordered](t MonotoneType, isStrict bool) *Mon
 	}
 }
 
-func NewMonotoneStackWithCompare[T any](f func(top, elem T) bool) *MonotoneStack[T] {
+// NewMonotoneStackWithCompare returns a new MonotoneStack.
+//
+// f is Custom comparison function
+//
+// compareFunc[T] func(top, elem T) bool
+//
+// when push elem onto stack , if "f(top,elem)" returns true, elem is pushed into the stack;
+func NewMonotoneStackWithCompare[T any](f compareFunc[T]) *MonotoneStack[T] {
 	return &MonotoneStack[T]{
 		list:    make([]T, 0, defaultSize),
 		t:       monotoneTypeCustomize,
