@@ -135,3 +135,23 @@ func Shuffle[T any](a []T) {
 		a[i], a[j] = a[j], a[i] // 交换两个索引处的元素
 	}
 }
+
+// Extract info from Slice  of type T to slice of type R
+func Extract[T any, R any](s []T, f func(T) R) []R {
+	var newList []R
+	for _, v := range s {
+		newList = append(newList, f(v))
+	}
+	return newList
+}
+
+// ToMap converts a slice to a map
+//
+// f can get key of map from elem
+func ToMap[T any, R comparable](s []T, f func(T) R) map[R]T {
+	m := make(map[R]T)
+	for _, v := range s {
+		m[f(v)] = v
+	}
+	return m
+}

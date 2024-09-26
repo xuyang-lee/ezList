@@ -25,7 +25,7 @@ type MonotoneStack[T any] struct {
 
 	// t is the type of monotone stack
 	//
-	// monotoneTypeCustomize is used in NewMonotoneStackWithCheck
+	// monotoneTypeCustomize is used in NewMonotoneStackWithCompare
 	// MonotoneTypeIncrease Monotonically increasing stack, default monotone type
 	// MonotoneTypeDecrease Monotonically decreasing stack
 	t MonotoneType
@@ -112,13 +112,13 @@ func (s *MonotoneStack[T]) Check(elem T) bool {
 }
 
 // Pop removes the item on the top of the stack and returns it.
-// If the stack is empty, Pop returns the zero value of the type T and an error.
+// If the stack is empty, Pop returns the zero value of the type T and false.
 func (s *MonotoneStack[T]) Pop() (T, bool) {
 	return s.pop()
 }
 
 // Top returns the item on the top of the stack without removing it.
-// If the stack is empty, Top returns the zero value of the type T and an error.
+// If the stack is empty, Top returns the zero value of the type T and false.
 func (s *MonotoneStack[T]) Top() (T, bool) {
 	return s.top()
 }
@@ -146,7 +146,7 @@ func (s *MonotoneStack[T]) List() []T {
 }
 
 // top returns the item on the top of the stack without removing it.
-// If the stack is empty, Top returns the zero value of the type T and an error.
+// If the stack is empty, Top returns the zero value of the type T and false.
 func (s *MonotoneStack[T]) top() (T, bool) {
 	if len(s.list) == 0 {
 		var zero T // Create a zero value of type T
@@ -161,7 +161,7 @@ func (s *MonotoneStack[T]) isEmpty() bool {
 }
 
 // pop removes the item on the top of the stack and returns it.
-// If the stack is empty, Pop returns the zero value of the type T and an error.
+// If the stack is empty, Pop returns the zero value of the type T and false.
 func (s *MonotoneStack[T]) pop() (T, bool) {
 	if len(s.list) == 0 {
 		var zero T // Create a zero value of type T
