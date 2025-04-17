@@ -112,7 +112,7 @@ func All[T comparable](s []T) bool {
 // if there isn't any overlap between a and b, return empty slice of type T and false
 func Overlap[T comparable](a, b []T) ([]T, bool) {
 
-	s := set.NewSetWithSlice(a).Union(set.NewSetWithSlice(b))
+	s := set.NewSetWithSlice(a).Intersect(set.NewSetWithSlice(b))
 	return s.List(), s.Len() > 0
 }
 
