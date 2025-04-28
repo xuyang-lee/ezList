@@ -155,3 +155,12 @@ func ToMap[T any, R comparable](s []T, f func(T) R) map[R]T {
 	}
 	return m
 }
+
+func ToMapGroup[T any, R comparable](s []T, f func(T) R) map[R][]T {
+	m := make(map[R][]T)
+	for _, v := range s {
+		k := f(v)
+		m[k] = append(m[k], v)
+	}
+	return m
+}
