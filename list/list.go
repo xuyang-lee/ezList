@@ -164,3 +164,26 @@ func ToMapGroup[T any, R comparable](s []T, f func(T) R) map[R][]T {
 	}
 	return m
 }
+
+// Paginate paginate slice
+func Paginate[T any](slice []T, page, size int) []T {
+
+	if page <= 0 || size <= 0 {
+		panic("page and size must be positive")
+	}
+
+	offset := (page - 1) * size
+	endIndex := offset + size
+
+	// deal start over index
+	if offset >= len(slice) {
+		return []T{}
+	}
+
+	// deal end over index
+	if endIndex > len(slice) {
+		endIndex = len(slice)
+	}
+
+	return slice[offset:endIndex]
+}
