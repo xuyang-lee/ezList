@@ -187,3 +187,10 @@ func Paginate[T any](slice []T, page, size int) []T {
 
 	return slice[offset:endIndex]
 }
+
+// Random to get a rand elem from slice
+func Random[T any](slice []T) T {
+	source := rand.NewSource(time.Now().UnixNano())
+	i := rand.New(source).Intn(len(slice))
+	return slice[i]
+}
