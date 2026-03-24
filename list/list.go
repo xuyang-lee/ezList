@@ -9,9 +9,8 @@ import (
 
 // Reverse slice s
 func Reverse[T any](s []T) {
-	last := len(s) - 1
-	for i := 0; i < len(s)/2; i++ {
-		s[i], s[last-i] = s[last-i], s[i]
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
 	}
 }
 
@@ -28,9 +27,9 @@ func Exclude[T comparable](s []T, e []T) []T {
 	exc := set.NewSetWithSlice(e)
 
 	var newList []T
-	for _, v := range s {
-		if !exc.Contains(v) {
-			newList = append(newList, v)
+	for i := range s {
+		if !exc.Contains(s[i]) {
+			newList = append(newList, s[i])
 		}
 	}
 	return newList
@@ -40,8 +39,8 @@ func Exclude[T comparable](s []T, e []T) []T {
 // Count the number of e in s
 func Count[T comparable](s []T, e T) int {
 	count := 0
-	for _, v := range s {
-		if v == e {
+	for i := range s {
+		if s[i] == e {
 			count++
 		}
 	}
@@ -50,8 +49,8 @@ func Count[T comparable](s []T, e T) int {
 
 // Contains checks if e is in s
 func Contains[T comparable](s []T, e T) bool {
-	for _, v := range s {
-		if v == e {
+	for i := range s {
+		if s[i] == e {
 			return true
 		}
 	}
@@ -68,29 +67,29 @@ func OrderDistinct[T comparable](s []T) []T {
 	return orderSet.NewOrderSetWithSlice(s).List()
 }
 
-// Filter returns a new slice with elements that satisfy the predicate f
-func Filter[T any](s []T, f func(T) bool) []T {
+// Filter returns a new slice with elements that satisfy the predicate 'keep'
+func Filter[T any](s []T, keep func(T) bool) []T {
 	var newList []T
-	for _, v := range s {
-		if f(v) {
-			newList = append(newList, v)
+	for i := range s {
+		if keep(s[i]) {
+			newList = append(newList, s[i])
 		}
 	}
 	return newList
 }
 
 // ProcessEach applies the function f to each element in the slice s
-func ProcessEach[T any](s []T, f func(T) T) {
-	for i, v := range s {
-		s[i] = f(v)
+func ProcessEach[T any](s []T, process func(T) T) {
+	for i := range s {
+		s[i] = process(s[i])
 	}
 }
 
 // Any checks if there is any element in the slice `s` that is not equal to the zero value of the type `T`
 func Any[T comparable](s []T) bool {
 	var e T
-	for _, v := range s {
-		if v != e {
+	for i := range s {
+		if s[i] != e {
 			return true
 		}
 	}
@@ -100,8 +99,8 @@ func Any[T comparable](s []T) bool {
 // All checks if all elements in the slice `s` are non-zero values for the type `T`
 func All[T comparable](s []T) bool {
 	var e T
-	for _, v := range s {
-		if v == e {
+	for i := range s {
+		if s[i] == e {
 			return false
 		}
 	}
@@ -118,8 +117,8 @@ func Overlap[T comparable](a, b []T) ([]T, bool) {
 
 // IndexOf returns the index of the first occurrence of t in s, or -1 if t is not present in s
 func IndexOf[T comparable](s []T, t T) int {
-	for i, v := range s {
-		if v == t {
+	for i := range s {
+		if s[i] == t {
 			return i
 		}
 	}
@@ -137,30 +136,39 @@ func Shuffle[T any](a []T) {
 }
 
 // Extract info from Slice  of type T to slice of type R
-func Extract[T any, R any](s []T, f func(T) R) []R {
-	var newList []R
-	for _, v := range s {
-		newList = append(newList, f(v))
+func Extract[T any, R any](s []T, transform func(T) R) []R {
+	newList := make([]R, len(s))
+	for i := range s {
+		newList[i] = transform(s[i])
+	}
+	return newList
+}
+
+// ExtractPtr info from Slice  of type T to slice of type R
+func ExtractPtr[T any, R any](s []T, transform func(*T) R) []R {
+	newList := make([]R, len(s))
+	for i := range s {
+		newList[i] = transform(&s[i])
 	}
 	return newList
 }
 
 // ToMap converts a slice to a map
 //
-// f can get key of map from elem
-func ToMap[T any, R comparable](s []T, f func(T) R) map[R]T {
+// keyFn can get key of map from elem
+func ToMap[T any, R comparable](s []T, keyFn func(T) R) map[R]T {
 	m := make(map[R]T)
-	for _, v := range s {
-		m[f(v)] = v
+	for i := range s {
+		m[keyFn(s[i])] = s[i]
 	}
 	return m
 }
 
-func ToMapGroup[T any, R comparable](s []T, f func(T) R) map[R][]T {
+func ToMapGroup[T any, R comparable](s []T, keyFn func(T) R) map[R][]T {
 	m := make(map[R][]T)
-	for _, v := range s {
-		k := f(v)
-		m[k] = append(m[k], v)
+	for i := range s {
+		k := keyFn(s[i])
+		m[k] = append(m[k], s[i])
 	}
 	return m
 }
@@ -193,4 +201,22 @@ func Random[T any](slice []T) T {
 	source := rand.NewSource(time.Now().UnixNano())
 	i := rand.New(source).Intn(len(slice))
 	return slice[i]
+}
+
+func Pointers[T any](r []T) []*T {
+	res := make([]*T, len(r))
+	for i := range r {
+		res[i] = &r[i]
+	}
+	return res
+}
+
+func Values[T any](s []*T) []T {
+	res := make([]T, len(s))
+	for i := range s {
+		if s[i] != nil {
+			res[i] = *s[i]
+		}
+	}
+	return res
 }

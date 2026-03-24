@@ -1,4 +1,4 @@
-package monotoneStack
+package monostack
 
 import "golang.org/x/exp/constraints"
 

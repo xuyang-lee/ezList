@@ -28,3 +28,4 @@ config.yaml
 .idea
 /log
 *_test.go
+.DS_Store
